@@ -1,7 +1,7 @@
 package opus
 
 // #cgo CFLAGS: -isystem opusfile-0.12/include -I opusfile-0.12/include -isystem opus-1.3.1/include -I opus-1.3.1/include -I opus-1.3.1/celt -I opus-1.3.1/silk
-// #cgo CFLAGS: -DOPUS_BUILD -DUSE_ALLOCA
+// #cgo CFLAGS: -DOPUS_BUILD -DUSE_ALLOCA -DHAVE_LRINT -DHAVE_LRINTF
 // #cgo LDFLAGS: -lm
 // #include <opusfile.h>
 import "C"
