@@ -17,11 +17,11 @@ import (
 func DecodeOpus(b []byte) (pcm []byte, numChannels int, err error) {
 	defer runtime.KeepAlive(b)
 
-	var err C.int
+	var cerr C.int
 
-	f := C.op_open_memory((*C.uchar)(&b[0]), C.size_t(len(b)), &err)
+	f := C.op_open_memory((*C.uchar)(&b[0]), C.size_t(len(b)), &cerr)
 	if f == nil {
-		return nil, 0, opusError(err)
+		return nil, 0, opusError(cerr)
 	}
 	defer C.op_free(f)
 
@@ -32,7 +32,7 @@ func DecodeOpus(b []byte) (pcm []byte, numChannels int, err error) {
 
 	ret := C.op_read(f, &pcmBuf[0], C.int(len(pcmBuf)), &link)
 	if ret < 0 {
-		return nil, 0, opusError(err)
+		return nil, 0, opusError(cerr)
 	}
 
 	numChannels = int(C.op_head(f, link).channel_count)
@@ -46,7 +46,7 @@ func DecodeOpus(b []byte) (pcm []byte, numChannels int, err error) {
 	}
 
 	if ret < 0 {
-		return nil, 0, opusError(err)
+		return nil, 0, opusError(cerr)
 	}
 
 	return pcm, numChannels, nil
@@ -56,11 +56,11 @@ func DecodeOpus(b []byte) (pcm []byte, numChannels int, err error) {
 func DecodeOpusFloat(b []byte) (pcm []byte, numChannels int, err error) {
 	defer runtime.KeepAlive(b)
 
-	var err C.int
+	var cerr C.int
 
-	f := C.op_open_memory((*C.uchar)(&b[0]), C.size_t(len(b)), &err)
+	f := C.op_open_memory((*C.uchar)(&b[0]), C.size_t(len(b)), &cerr)
 	if f == nil {
-		return nil, 0, opusError(err)
+		return nil, 0, opusError(cerr)
 	}
 	defer C.op_free(f)
 
@@ -71,7 +71,7 @@ func DecodeOpusFloat(b []byte) (pcm []byte, numChannels int, err error) {
 
 	ret := C.op_read_float(f, &pcmBuf[0], C.int(len(pcmBuf)), &link)
 	if ret < 0 {
-		return nil, 0, opusError(err)
+		return nil, 0, opusError(cerr)
 	}
 
 	numChannels = int(C.op_head(f, link).channel_count)
@@ -85,7 +85,7 @@ func DecodeOpusFloat(b []byte) (pcm []byte, numChannels int, err error) {
 	}
 
 	if ret < 0 {
-		return nil, 0, opusError(err)
+		return nil, 0, opusError(cerr)
 	}
 
 	return pcm, numChannels, nil
