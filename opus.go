@@ -32,7 +32,7 @@ func DecodeOpus(b []byte) (pcm []byte, numChannels int, err error) {
 
 	ret := C.op_read(f, &pcmBuf[0], C.int(len(pcmBuf)), &link)
 	if ret < 0 {
-		return nil, 0, opusError(cerr)
+		return nil, 0, opusError(ret)
 	}
 
 	numChannels = int(C.op_head(f, link).channel_count)
@@ -40,13 +40,11 @@ func DecodeOpus(b []byte) (pcm []byte, numChannels int, err error) {
 	for ret != 0 {
 		unsafePCMBuf := (*[unsafe.Sizeof(pcmBuf)]byte)(unsafe.Pointer(&pcmBuf[0]))
 		pcm = append(pcm, unsafePCMBuf[:int(ret)*numChannels*2]...)
-		runtime.KeepAlive(pcmBuf)
 
 		ret = C.op_read(f, &pcmBuf[0], C.int(len(pcmBuf)), &link)
-	}
-
-	if ret < 0 {
-		return nil, 0, opusError(cerr)
+		if ret < 0 {
+			return pcm, numChannels, opusError(ret)
+		}
 	}
 
 	return pcm, numChannels, nil
@@ -71,7 +69,7 @@ func DecodeOpusFloat(b []byte) (pcm []byte, numChannels int, err error) {
 
 	ret := C.op_read_float(f, &pcmBuf[0], C.int(len(pcmBuf)), &link)
 	if ret < 0 {
-		return nil, 0, opusError(cerr)
+		return nil, 0, opusError(ret)
 	}
 
 	numChannels = int(C.op_head(f, link).channel_count)
@@ -79,13 +77,11 @@ func DecodeOpusFloat(b []byte) (pcm []byte, numChannels int, err error) {
 	for ret != 0 {
 		unsafePCMBuf := (*[unsafe.Sizeof(pcmBuf)]byte)(unsafe.Pointer(&pcmBuf[0]))
 		pcm = append(pcm, unsafePCMBuf[:int(ret)*numChannels*2]...)
-		runtime.KeepAlive(pcmBuf)
 
 		ret = C.op_read_float(f, &pcmBuf[0], C.int(len(pcmBuf)), &link)
-	}
-
-	if ret < 0 {
-		return nil, 0, opusError(cerr)
+		if ret < 0 {
+			return pcm, numChannels, opusError(ret)
+		}
 	}
 
 	return pcm, numChannels, nil
