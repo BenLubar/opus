@@ -48,7 +48,7 @@ int ogg_page_eos(const ogg_page *og){
 
 ogg_int64_t ogg_page_granulepos(const ogg_page *og){
   unsigned char *page=og->header;
-  ogg_uint64_t granulepos=page[13]&(0xff);
+  unsigned long long granulepos=page[13]&(0xff);
   granulepos= (granulepos<<8)|(page[12]&0xff);
   granulepos= (granulepos<<8)|(page[11]&0xff);
   granulepos= (granulepos<<8)|(page[10]&0xff);
